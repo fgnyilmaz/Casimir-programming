@@ -92,7 +92,7 @@ def apply_lateral_rectangles(background, orizontal, vertical):
     figure = background
     return figure
 
-def apply_circes(circle, background, rectangle):
+def apply_edges_circes(circle, background, rectangle):
     N = np.size(background[:,0])
     x = np.size(rectangle[:,0])
     y = np.size(rectangle[0,:])
@@ -121,7 +121,7 @@ orizontal = coeff*outer_orizontal_rect(length_b,radius)
 vertical = coeff*outer_vertical_rect(length_a,radius)
 cir = coeff*circle(radius)
 
-picture = apply_circes(cir, back, central_rect)
+picture = apply_edges_circes(cir, back, central_rect)
 picture = apply_central_rectagle(back,central_rect)
 picture = apply_lateral_rectangles(back,orizontal,vertical)
 
