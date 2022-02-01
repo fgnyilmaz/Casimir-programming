@@ -1,3 +1,4 @@
+from cmath import pi
 from operator import le
 from re import L
 from anyio import current_default_worker_thread_limiter
@@ -21,109 +22,67 @@ def background(sheet_dimension):
     back = np.zeros((sheet_dimension,sheet_dimension))
     return back
 
-def inner_rectange(length_a, length_b, radius):
-    new_a = length_a - 2*radius
-    new_b = length_b - 2*radius
+def rectangle(x,y):
+    return np.ones((y,x))
 
-    rectangle = np.ones((new_a,new_b))
-    return rectangle
+def circle(radius_out, radius_in = 0):
+    x = np.linspace(-radius_out,radius_out, 2*radius_out)
+    y = np.linspace(-radius_out,radius_out, 2*radius_out)
+    A = np.zeros((2*radius_out,2*radius_out))
+    for i in x[:-1]:
+        for j in y[:-1]:
+            r = np.sqrt(i**2+j**2)
+            if r < radius_out and r >= radius_in:  
+                A[radius_out+int(i),radius_out+int(j)] = 1
+    figure = A
+    return figure
 
-def outer_vertical_rect(length_a,radius):
-    new_a = length_a - 2*radius
-    rectangle = np.ones((new_a,radius))
-    return(rectangle)
-
-def outer_orizontal_rect(length_b,radius):
-    new_b = length_b - 2*radius
-    rectangle = np.ones((radius,new_b))
-    return(rectangle)
-
-def circle(radius):
-    x = np.linspace(-radius,radius, num = 2*radius)
-    y = np.linspace(-radius,radius, num = 2*radius)
-    A = np.zeros((2*radius,2*radius))
+def ellipse(a_max, b_max, a_min = 0, b_min = 0):
+    x = np.linspace(-a_max,a_max, num = 2*a_max)
+    y = np.linspace(-b_max,b_max, num = 2*b_max)
+    A = np.zeros((2*a_max+1,2*b_max+1))
 
     for i in x:
         for j in y:
-            if np.sqrt(i**2+j**2) < radius:
-                A[radius+int(i),radius+int(j)] = 1
+            r_max = np.sqrt(i**2/a_max**2+j**2/b_max**2)
+            r_min = np.sqrt(i**2/a_min**2+j**2/b_min**2)
+            if r_max < 1 and r_min > 1:  
+                A[a_max+int(i),b_max+int(j)] = 1
+            else:
+                A[a_max+int(i),b_max+int(j)] = 0
     figure = A
-    return A
-
-
-
-def apply_central_rectagle(background, rectangle):
-    N = np.size(background[:,0])
-    x = np.size(rectangle[:,0])
-    y = np.size(rectangle[0,:])
-
-    if N % 2 != 0:
-        N = N+1
-    if y % 2 != 0:
-        y = y+1
-    if x % 2 != 0:
-        x = x+1
-
-    background[int((N/2)-(x/2)):int((N/2)+(x/2)),int((N/2)-(y/2)):int((N/2)+(y/2))] = rectangle
-    figure = background
     return figure
 
-def apply_lateral_rectangles(background, orizontal, vertical):
-    N = np.size(background[:,0])
-    x = np.size(orizontal[0,:])
-    y = np.size(vertical[:,0])
-    r = np.size(orizontal[:,0])
+def apply_figure(background, figure_to_apply, x_coordinate = 0, y_coordinate = 0):
+    N = int(np.size(background[:,0]))
+    a = int(np.size(figure_to_apply[:,0])/2)
+    b = int(np.size(figure_to_apply[0,:])/2)
 
-    if N % 2 != 0:
-        N = N+1
-    if y % 2 != 0:
-        y = y+1
-    if x % 2 != 0:
-        x = x+1
-    if r % 2 != 0:
-        r = r+1
+    x_start = int(N/2 + x_coordinate)
+    y_start = int(N/2 + y_coordinate)
 
-    background[int(N/2-y/2):int(N/2+y/2),int(N/2-x/2-r):int(N/2-x/2)] = vertical
-    background[int(N/2-y/2):int(N/2+y/2),int(N/2+x/2):int(N/2+x/2+r)] = vertical
+    background[(y_start-a):(y_start+a),(x_start-b):(x_start+b)] = figure_to_apply
+    new_figure = background
+    return new_figure
 
-    background[int(N/2-y/2-r):int(N/2-y/2),int(N/2-x/2):int(N/2+x/2)] = orizontal
-    background[int(N/2+y/2):int(N/2+y/2+r),int(N/2-x/2):int(N/2+x/2)] = orizontal
-
-    figure = background
-    return figure
-
-def apply_edges_circes(circle, background, rectangle):
-    N = np.size(background[:,0])
-    x = np.size(rectangle[:,0])
-    y = np.size(rectangle[0,:])
-    r = np.size(circle[:,0])/2
-
-    if N % 2 != 0:
-        N = N+1
-    if y % 2 != 0:
-        y = y+1
-    if x % 2 != 0:
-        x = x+1
-
-    k = [-1,1]
-    for i in k:
-        for j in k:
-            background[int(N/2+i*(x/2)-r):int(N/2+i*(x/2)+r),int(N/2+j*(y/2)-r):int(N/2+j*(y/2)+r)] = circle
-        
-
-
-
-
-
+    
 back = background(sheet_dimension)
-central_rect = coeff*inner_rectange(length_a,length_b,radius)
-orizontal = coeff*outer_orizontal_rect(length_b,radius)
-vertical = coeff*outer_vertical_rect(length_a,radius)
-cir = coeff*circle(radius)
 
-picture = apply_edges_circes(cir, back, central_rect)
-picture = apply_central_rectagle(back,central_rect)
-picture = apply_lateral_rectangles(back,orizontal,vertical)
+central_rect = coeff*rectangle(length_b-2*radius,length_a-2*radius)
+orizontal = coeff*rectangle(length_b-2*radius,radius)
+vertical = coeff*rectangle(radius,length_a-2*radius)
+cir = coeff*circle(radius)
+ellip = coeff*ellipse(100,50,90,40)
+
+for i in [-1,1]:
+    for j in [-1,1]:
+        picture = apply_figure(back,cir,i*length_b/2-i*radius,j*length_a/2-j*radius)
+
+picture = apply_figure(back, central_rect,0,0)
+picture = apply_figure(back,orizontal,0,length_a/2-radius/2)
+picture = apply_figure(back,orizontal,0,-length_a/2+radius/2)
+picture = apply_figure(back,vertical,length_b/2-radius/2,0)
+picture = apply_figure(back,vertical,-length_b/2+radius/2,0)
 
 
 
