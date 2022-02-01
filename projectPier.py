@@ -3,13 +3,35 @@ import matplotlib.pylab as plt
 
 
 def background(sheet_dimension):
+    """
+    create the background
+    parameters:
+    int
+    dimension of the background
+    """
     back = np.zeros((sheet_dimension,sheet_dimension))
     return back
 
 def rectangle(x,y):
+    """
+    create a rectangle
+    parameters:
+    int
+    height and lenght
+    """
     return np.ones((y,x))
 
 def circle(radius_out, radius_in = 0, background_color = 0):
+    """
+    create a circle
+    parameters:
+    int outer radius
+    inner radius
+
+    optional:
+    background color, which means you have to put the number you want to have
+    that then matplot will transform into a color 
+    """
     x = np.linspace(-radius_out,radius_out, 2*radius_out)
     y = np.linspace(-radius_out,radius_out, 2*radius_out)
     A = background_color * np.ones((2*radius_out,2*radius_out))
@@ -22,6 +44,16 @@ def circle(radius_out, radius_in = 0, background_color = 0):
     return figure
 
 def ellipse(a_max, b_max, a_min = 0, b_min = 0,background_color = 0):
+    """
+    create an ellipse
+    parameters:
+    int
+    inner and outer b and a axies
+
+    optional:
+    background color, which means you have to put the number you want to have
+    that then matplot will transform into a color 
+    """
     x = np.linspace(-a_max,a_max, num = 2*a_max)
     y = np.linspace(-b_max,b_max, num = 2*b_max)
     A = background_color * np.ones((2*a_max,2*b_max))
@@ -36,6 +68,18 @@ def ellipse(a_max, b_max, a_min = 0, b_min = 0,background_color = 0):
     return figure
 
 def apply_figure(background, figure_to_apply, x_coordinate = 0, y_coordinate = 0):
+    """
+    put the figure tou created in the background
+
+    parameters:
+    background = matrix
+    figure_to_apply = matrix
+
+    optional:
+    int
+    put the coordinates of the center of your figure
+
+    """
     N = int(np.size(background[:,0]))
     a = int(np.size(figure_to_apply[:,0])/2)
     b = int(np.size(figure_to_apply[0,:])/2)
@@ -60,6 +104,7 @@ color_1 = 0.1
 back = background(sheet_dimension)
 
 #base
+#crete the figures of the base and apply them to the background
 central_rect = color_1*rectangle(length_b-2*radius,length_a-2*radius)
 orizontal = color_1*rectangle(length_b-2*radius,radius)
 vertical = color_1*rectangle(radius,length_a-2*radius)
@@ -76,6 +121,7 @@ picture = apply_figure(back,orizontal,0,-length_a/2+radius/2)
 picture = apply_figure(back,vertical,length_b/2-radius/2,0)
 picture = apply_figure(back,vertical,-length_b/2+radius/2,0)
 
+#### create various parts of the circuit ####
 #central gate
 color_2 = 0.5
 rad_gate = 200
@@ -127,6 +173,8 @@ b_max = 800
 a_max = 100
 ell_bottom = color_6*ellipse(a_max,b_max,0,0,0)
 picture = apply_figure(back,ell_bottom,0,length_a/2 + 200)
+
+#plotting
 
 figure, axes = plt.subplots()
 
