@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pylab as plt
+import matplotlib.animation as animation
 
 
 def background(sheet_dimension):
@@ -98,7 +99,7 @@ length_a = 2500
 length_b = 2500
 radius = 200
 
-color_1 = 0.1
+color_1 = [0.1,0.1]
 
     
 back = background(background_dimension)
@@ -123,7 +124,7 @@ picture = apply_figure(back,vertical,-length_b/2+radius/2,0)
 
 #### create various parts of the circuit ####
 #central gate
-color_2 = 0.5
+color_2 = [0.5,0.55]
 rad_gate = 200
 circle_gate = color_2*circle(rad_gate,0,color_1/color_2)
 picture = apply_figure(back,circle_gate,0,-length_a/4)
@@ -136,14 +137,14 @@ picture = apply_figure(back,vertical_rect_gate,0,-length_a/8)
 picture = apply_figure(back,vertical_rect_gate,0,+length_a/8)
 
 #connection 
-color_3 = 0.8
+color_3 = [0.8,0.85]
 h = 330
 t = 50 
 conn = color_3*rectangle(t,h)
 picture = apply_figure(back,conn,0,0)
 
 #lateral connector
-color_4 = 0.7
+color_4 = [0.7,0.75]
 h = 400
 t = 10
 lateral_con = color_4*rectangle(t,h)
@@ -159,7 +160,7 @@ picture = apply_figure(back,quarter_circle_down,290,-190)
 picture = apply_figure(back,quarter_circle_up,290,190)
 
 #right ellipse
-color_5 = 0.9
+color_5 = [0.9,0.95]
 b_max = 500
 b_min = 450
 a_max = 200
@@ -168,7 +169,7 @@ ell = color_5*ellipse(a_max,b_max,a_min,b_min, color_1/color_5)[:,:int(b_max)]
 picture = apply_figure(back,ell, length_a/2-b_max/2,0)
 
 #bottom ellipse
-color_6 = 1
+color_6 = [1,1.05]
 b_max = 800
 a_max = 100
 ell_bottom = color_6*ellipse(a_max,b_max,0,0,0)
@@ -178,7 +179,10 @@ picture = apply_figure(back,ell_bottom,0,length_a/2 + 200)
 
 figure, axes = plt.subplots()
 
-axes.imshow(picture)
-
-plt.show()
+for i in len(color_4):
+    axes.cla()
+    axes.imshow(ell[i])
+    axes.set_title("frame {}".format(i))
+    plt.pause(0.1)
+# plt.show()
 
