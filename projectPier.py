@@ -92,7 +92,7 @@ def apply_figure(background, figure_to_apply, x_coordinate = 0, y_coordinate = 0
     return new_figure
 
 
-sheet_dimension = 4000
+background_dimension = 4000
 
 length_a = 2500
 length_b = 2500
@@ -101,7 +101,7 @@ radius = 200
 color_1 = 0.1
 
     
-back = background(sheet_dimension)
+back = background(background_dimension)
 
 #base
 #crete the figures of the base and apply them to the background
